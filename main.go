@@ -26,7 +26,7 @@ var quitKeys = key.NewBinding(
 func initialModel() model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#c084fc"))
 	return model{spinner: s}
 }
 
