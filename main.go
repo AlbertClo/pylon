@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
+	"os"
+	"os/exec"
+
 	"github.com/AlbertClo/pylon/keyboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"os"
-	"os/exec"
 )
 
 type errMsg error
@@ -65,7 +66,10 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 		if key.Matches(msg, m.keys.Start) {
 			cmd := exec.Command("touch", "test")
-			cmd.Run()
+			err := cmd.Run()
+			if err != nil {
+				m.err = err
+			}
 		}
 		return m, nil
 	case tea.WindowSizeMsg:
