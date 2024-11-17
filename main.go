@@ -12,11 +12,16 @@ import (
 
 type errMsg error
 
-type model struct {
-	spinner  spinner.Model
-	counter  int
-	quitting bool
-	err      error
+type Model struct {
+	spinner    spinner.Model
+	counter    int
+	message    string
+	quitting   bool
+	err        error
+	windowSize struct {
+		width  int
+		height int
+	}
 }
 
 var quitKeys = key.NewBinding(
@@ -44,18 +49,18 @@ var startKeys = key.NewBinding(
 	key.WithHelp("s", "start"),
 )
 
-func initialModel() model {
+func initialModel() Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#c084fc"))
-	return model{spinner: s, counter: 0}
+	return Model{spinner: s, counter: 0, message: ""}
 }
 
-func (m model) Init() tea.Cmd {
+func (m Model) Init() tea.Cmd {
 	return m.spinner.Tick
 }
 
-func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if key.Matches(msg, quitKeys) {
@@ -77,6 +82,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			cmd.Run()
 		}
 		return m, nil
+	case tea.WindowSizeMsg:
+		m.windowSize.width = msg.Width
+		m.windowSize.height = msg.Height
+		m.message = fmt.Sprintf("Window size: %d x %d", msg.Width, msg.Height)
+		return m, nil
 	case errMsg:
 		m.err = msg
 		return m, nil
@@ -88,7 +98,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 }
 
-func (m model) View() string {
+func (m Model) View() string {
 	if m.err != nil {
 		return m.err.Error()
 	}
@@ -100,12 +110,15 @@ func (m model) View() string {
    %s
    %s
    %s
+   %s
    %s`,
 		m.counter,
 		incrementKeys.Help(),
 		decrementKeys.Help(),
 		startKeys.Help(),
-		quitKeys.Help())
+		quitKeys.Help(),
+		m.message,
+	)
 
 	if m.quitting {
 		return str + "\n"
