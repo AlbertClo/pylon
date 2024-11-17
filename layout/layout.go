@@ -21,7 +21,7 @@ func New(width, height int) *Layout {
 		width:         width,
 		height:        height,
 		leftPaneWidth: 30,
-		bottomHeight:  10,
+		bottomHeight:  7,
 		heightOffset:  1,
 	}
 }
@@ -44,7 +44,7 @@ func (l *Layout) SetBottomContent(content string) *Layout {
 func (l *Layout) Render() string {
 	leftStyle := lipgloss.NewStyle().
 		PaddingTop(1).
-		PaddingLeft(2).
+		PaddingLeft(3).
 		Width(l.leftPaneWidth).
 		Height(l.height - l.bottomHeight - l.heightOffset).
 		Foreground(color.Secondary).
@@ -54,14 +54,14 @@ func (l *Layout) Render() string {
 
 	rightStyle := lipgloss.NewStyle().
 		PaddingTop(1).
-		PaddingLeft(2).
+		PaddingLeft(3).
 		Width(l.width - l.leftPaneWidth).
 		Height(l.height - l.bottomHeight - l.heightOffset).
 		Foreground(color.Secondary)
 
 	bottomStyle := lipgloss.NewStyle().
 		PaddingTop(1).
-		PaddingLeft(2).
+		PaddingLeft(3).
 		Width(l.width).
 		Height(l.bottomHeight).
 		Foreground(color.Secondary).

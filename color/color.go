@@ -3,6 +3,7 @@ package color
 import "github.com/charmbracelet/lipgloss"
 
 const (
+	whiteColorString  = "#ffffff"
 	purpleColorString = "#c084fc"
 	greenColorString  = "#10B981"
 	grayColorString   = "#64748b"
@@ -11,23 +12,24 @@ const (
 )
 
 var (
-	Purple = lipgloss.Color(purpleColorString)
-	Green  = lipgloss.Color(greenColorString)
-	Gray   = lipgloss.Color(grayColorString)
-	Blue   = lipgloss.Color(blueColorString)
-	Red    = lipgloss.Color(redColorString)
+	white  = lipgloss.Color(whiteColorString)
+	purple = lipgloss.Color(purpleColorString)
+	green  = lipgloss.Color(greenColorString)
+	gray   = lipgloss.Color(grayColorString)
+	blue   = lipgloss.Color(blueColorString)
+	red    = lipgloss.Color(redColorString)
 )
 
 var (
-	Primary   = Green
-	Secondary = Purple
-	Muted     = Gray
-	Error     = Red
+	Primary   = green
+	Secondary = white
+	Muted     = gray
+	Error     = red
 )
 
 var (
 	ErrorStyle = lipgloss.NewStyle().
-			Foreground(Red).
+			Foreground(red).
 			Bold(true)
 
 	HeaderStyle = lipgloss.NewStyle().
@@ -35,5 +37,5 @@ var (
 			Bold(true)
 
 	TextStyle = lipgloss.NewStyle().
-			Foreground(Gray)
+			Foreground(gray)
 )

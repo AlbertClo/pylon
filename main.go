@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/AlbertClo/pylon/color"
 	"github.com/AlbertClo/pylon/layout"
+	"github.com/AlbertClo/pylon/view"
 	"os"
 	"os/exec"
 
@@ -13,7 +15,13 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
-type errMsg error
+func main() {
+	p := tea.NewProgram(initialModel())
+	if _, err := p.Run(); err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+}
 
 type Model struct {
 	spinner    spinner.Model
@@ -26,22 +34,29 @@ type Model struct {
 		width  int
 		height int
 	}
-	style lipgloss.Style
+}
+
+func (m Model) GetCounter() int {
+	return m.counter
+}
+
+func (m Model) GetMessage() string {
+	return m.message
+}
+
+func (m Model) GetKeys() keybind.Shortcuts {
+	return m.keys
 }
 
 func initialModel() Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
-	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#c084fc"))
+	s.Style = lipgloss.NewStyle().Foreground(color.Primary)
 	return Model{
 		spinner: s,
 		counter: 0,
 		message: "",
 		keys:    keybind.New(),
-		style: lipgloss.NewStyle().
-			PaddingTop(2).
-			PaddingLeft(4).
-			Foreground(lipgloss.Color("#10B981")),
 	}
 }
 
@@ -78,7 +93,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.windowSize.height = msg.Height
 		m.message = fmt.Sprintf("Window size: %d x %d", msg.Width, msg.Height)
 		return m, nil
-	case errMsg:
+	case error:
 		m.err = msg
 		return m, nil
 
@@ -94,30 +109,9 @@ func (m Model) View() string {
 		return m.err.Error()
 	}
 
-	leftContent := fmt.Sprintf(`Counter: %d`, m.counter)
-	rightContent := fmt.Sprintf(`Window Size: %s`, m.message)
-	bottomContent := fmt.Sprintf(`Controls:
-%s
-%s
-%s
-%s`,
-		m.keys.Quit.Help(),
-		m.keys.Increment.Help(),
-		m.keys.Decrement.Help(),
-		m.keys.Reset.Help(),
-	)
-
 	return layout.New(m.windowSize.width, m.windowSize.height).
-		SetLeftContent(leftContent).
-		SetRightContent(rightContent).
-		SetBottomContent(bottomContent).
+		SetLeftContent(view.RenderLeftContent(m)).
+		SetRightContent(view.RenderRightContent(m)).
+		SetBottomContent(view.RenderBottomContent(m)).
 		Render()
-}
-
-func main() {
-	p := tea.NewProgram(initialModel())
-	if _, err := p.Run(); err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
 }
