@@ -58,7 +58,10 @@ func initialModel() Model {
 		spinner: s,
 		counter: 0,
 		message: "",
-		style:   lipgloss.NewStyle().PaddingTop(2).PaddingLeft(4),
+		style: lipgloss.NewStyle().
+			PaddingTop(2).
+			PaddingLeft(4).
+			Foreground(lipgloss.Color("#10B981")),
 	}
 }
 
