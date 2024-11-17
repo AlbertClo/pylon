@@ -3,16 +3,14 @@ package main
 import (
 	"fmt"
 	"github.com/AlbertClo/pylon/color"
+	"github.com/AlbertClo/pylon/keybind"
 	"github.com/AlbertClo/pylon/layout"
 	"github.com/AlbertClo/pylon/view"
-	"os"
-	"os/exec"
-
-	"github.com/AlbertClo/pylon/keybind"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"os"
 )
 
 func main() {
@@ -30,6 +28,8 @@ type Model struct {
 	quitting   bool
 	err        error
 	keys       keybind.Shortcuts
+	menuItems  []string
+	selected   int
 	windowSize struct {
 		width  int
 		height int
@@ -48,15 +48,25 @@ func (m Model) GetKeys() keybind.Shortcuts {
 	return m.keys
 }
 
+func (m Model) GetMenuItems() []string {
+	return m.menuItems
+}
+
+func (m Model) GetSelectedItem() int {
+	return m.selected
+}
+
 func initialModel() Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(color.Primary)
 	return Model{
-		spinner: s,
-		counter: 0,
-		message: "",
-		keys:    keybind.New(),
+		spinner:   s,
+		counter:   0,
+		message:   "",
+		keys:      keybind.New(),
+		menuItems: []string{"Start", "Stop", "Quit"},
+		selected:  0, // Start with first item selected
 	}
 }
 
@@ -67,27 +77,35 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if key.Matches(msg, m.keys.Quit) {
+		switch {
+		case key.Matches(msg, m.keys.Quit):
 			m.quitting = true
 			return m, tea.Quit
-		}
-		if key.Matches(msg, m.keys.Increment) {
-			m.counter++
-		}
-		if key.Matches(msg, m.keys.Decrement) {
-			m.counter--
-		}
-		if key.Matches(msg, m.keys.Reset) {
-			m.counter = 0
-		}
-		if key.Matches(msg, m.keys.Start) {
-			cmd := exec.Command("touch", "test")
-			err := cmd.Run()
-			if err != nil {
-				m.err = err
+		case key.Matches(msg, m.keys.Up):
+			if m.selected > 0 {
+				m.selected--
+			} else {
+				m.selected = len(m.menuItems) - 1
+			}
+			return m, nil
+		case key.Matches(msg, m.keys.Down):
+			if m.selected < len(m.menuItems)-1 {
+				m.selected++
+			} else {
+				m.selected = 0
+			}
+			return m, nil
+		case key.Matches(msg, m.keys.Enter):
+			switch m.menuItems[m.selected] {
+			case "Start":
+				m.message = "Starting..."
+			case "Stop":
+				m.message = "Stopping..."
+			case "Quit":
+				m.quitting = true
+				return m, tea.Quit
 			}
 		}
-		return m, nil
 	case tea.WindowSizeMsg:
 		m.windowSize.width = msg.Width
 		m.windowSize.height = msg.Height
@@ -96,12 +114,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case error:
 		m.err = msg
 		return m, nil
-
-	default:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
-		return m, cmd
 	}
+
+	var cmd tea.Cmd
+	m.spinner, cmd = m.spinner.Update(msg)
+	return m, cmd
 }
 
 func (m Model) View() string {

@@ -21,7 +21,7 @@ func New(width, height int) *Layout {
 		width:         width,
 		height:        height,
 		leftPaneWidth: 30,
-		bottomHeight:  7,
+		bottomHeight:  8,
 		heightOffset:  1,
 	}
 }

@@ -8,4 +8,6 @@ type Model interface {
 	GetCounter() int
 	GetMessage() string
 	GetKeys() keybind.Shortcuts
+	GetMenuItems() []string
+	GetSelectedItem() int
 }

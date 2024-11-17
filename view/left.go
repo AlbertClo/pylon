@@ -1,7 +1,22 @@
 package view
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 func RenderLeftContent(m Model) string {
-	return fmt.Sprintf(`Counter: %d`, m.GetCounter())
+	var menuStr strings.Builder
+
+	for i, item := range m.GetMenuItems() {
+		if i == m.GetSelectedItem() {
+			// Selected item
+			menuStr.WriteString(fmt.Sprintf("> %s\n", item))
+		} else {
+			// Unselected item
+			menuStr.WriteString(fmt.Sprintf("  %s\n", item))
+		}
+	}
+
+	return menuStr.String()
 }
