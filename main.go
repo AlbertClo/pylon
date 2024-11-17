@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AlbertClo/pylon/layout"
 	"os"
 	"os/exec"
 
@@ -93,26 +94,24 @@ func (m Model) View() string {
 		return m.err.Error()
 	}
 
-	str := fmt.Sprintf(`Counter: %d
-Controls:
-%s
+	leftContent := fmt.Sprintf(`Counter: %d`, m.counter)
+	rightContent := fmt.Sprintf(`Window Size: %s`, m.message)
+	bottomContent := fmt.Sprintf(`Controls:
 %s
 %s
 %s
 %s`,
-		m.counter,
 		m.keys.Quit.Help(),
 		m.keys.Increment.Help(),
 		m.keys.Decrement.Help(),
 		m.keys.Reset.Help(),
-		m.message,
 	)
 
-	if m.quitting {
-		return str + "\n"
-	}
-
-	return m.style.Width(m.windowSize.width).Height(m.windowSize.height).Render(str)
+	return layout.New(m.windowSize.width, m.windowSize.height).
+		SetLeftContent(leftContent).
+		SetRightContent(rightContent).
+		SetBottomContent(bottomContent).
+		Render()
 }
 
 func main() {
