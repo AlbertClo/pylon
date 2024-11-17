@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/AlbertClo/pylon/keyboard"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -18,37 +19,13 @@ type Model struct {
 	message    string
 	quitting   bool
 	err        error
+	keys       keyboard.Shortcuts
 	windowSize struct {
 		width  int
 		height int
 	}
 	style lipgloss.Style
 }
-
-var quitKeys = key.NewBinding(
-	key.WithKeys("q", "esc", "ctrl+c"),
-	key.WithHelp("q", "quit"),
-)
-
-var incrementKeys = key.NewBinding(
-	key.WithKeys("up", "k"),
-	key.WithHelp("↑/k", "increment"),
-)
-
-var decrementKeys = key.NewBinding(
-	key.WithKeys("down", "j"),
-	key.WithHelp("↓/j", "decrement"),
-)
-
-var resetKeys = key.NewBinding(
-	key.WithKeys("r"),
-	key.WithHelp("r", "reset"),
-)
-
-var startKeys = key.NewBinding(
-	key.WithKeys("s"),
-	key.WithHelp("s", "start"),
-)
 
 func initialModel() Model {
 	s := spinner.New()
@@ -58,6 +35,7 @@ func initialModel() Model {
 		spinner: s,
 		counter: 0,
 		message: "",
+		keys:    keyboard.New(),
 		style: lipgloss.NewStyle().
 			PaddingTop(2).
 			PaddingLeft(4).
@@ -72,21 +50,20 @@ func (m Model) Init() tea.Cmd {
 func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if key.Matches(msg, quitKeys) {
+		if key.Matches(msg, m.keys.Quit) {
 			m.quitting = true
 			return m, tea.Quit
-
 		}
-		if key.Matches(msg, incrementKeys) {
+		if key.Matches(msg, m.keys.Increment) {
 			m.counter++
 		}
-		if key.Matches(msg, decrementKeys) {
+		if key.Matches(msg, m.keys.Decrement) {
 			m.counter--
 		}
-		if key.Matches(msg, resetKeys) {
+		if key.Matches(msg, m.keys.Reset) {
 			m.counter = 0
 		}
-		if key.Matches(msg, startKeys) {
+		if key.Matches(msg, m.keys.Start) {
 			cmd := exec.Command("touch", "test")
 			cmd.Run()
 		}
@@ -120,10 +97,10 @@ Controls:
 %s
 %s`,
 		m.counter,
-		incrementKeys.Help(),
-		decrementKeys.Help(),
-		startKeys.Help(),
-		quitKeys.Help(),
+		m.keys.Quit.Help(),
+		m.keys.Increment.Help(),
+		m.keys.Decrement.Help(),
+		m.keys.Reset.Help(),
 		m.message,
 	)
 

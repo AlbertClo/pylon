@@ -1,4 +1,4 @@
-module github.com/charmbracelet/bubbletea-app-template
+module github.com/AlbertClo/pylon
 
 go 1.23
 
