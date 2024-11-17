@@ -5,7 +5,7 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/AlbertClo/pylon/keyboard"
+	"github.com/AlbertClo/pylon/keybind"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -20,7 +20,7 @@ type Model struct {
 	message    string
 	quitting   bool
 	err        error
-	keys       keyboard.Shortcuts
+	keys       keybind.Shortcuts
 	windowSize struct {
 		width  int
 		height int
@@ -36,7 +36,7 @@ func initialModel() Model {
 		spinner: s,
 		counter: 0,
 		message: "",
-		keys:    keyboard.New(),
+		keys:    keybind.New(),
 		style: lipgloss.NewStyle().
 			PaddingTop(2).
 			PaddingLeft(4).

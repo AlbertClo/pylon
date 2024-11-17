@@ -1,4 +1,4 @@
-package keyboard
+package keybind
 
 import "github.com/charmbracelet/bubbles/key"
 
