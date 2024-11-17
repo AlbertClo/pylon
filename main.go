@@ -22,6 +22,7 @@ type Model struct {
 		width  int
 		height int
 	}
+	style lipgloss.Style
 }
 
 var quitKeys = key.NewBinding(
@@ -53,7 +54,12 @@ func initialModel() Model {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#c084fc"))
-	return Model{spinner: s, counter: 0, message: ""}
+	return Model{
+		spinner: s,
+		counter: 0,
+		message: "",
+		style:   lipgloss.NewStyle().PaddingTop(2).PaddingLeft(4),
+	}
 }
 
 func (m Model) Init() tea.Cmd {
@@ -103,15 +109,13 @@ func (m Model) View() string {
 		return m.err.Error()
 	}
 
-	str := fmt.Sprintf(`
-   Counter: %d
-
-   Controls:
-   %s
-   %s
-   %s
-   %s
-   %s`,
+	str := fmt.Sprintf(`Counter: %d
+Controls:
+%s
+%s
+%s
+%s
+%s`,
 		m.counter,
 		incrementKeys.Help(),
 		decrementKeys.Help(),
@@ -124,7 +128,7 @@ func (m Model) View() string {
 		return str + "\n"
 	}
 
-	return str
+	return m.style.Width(m.windowSize.width).Height(m.windowSize.height).Render(str)
 }
 
 func main() {
