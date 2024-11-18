@@ -9,27 +9,29 @@ const (
 	grayColorString   = "#64748b"
 	blueColorString   = "#3b82f6"
 	redColorString    = "#ef4444"
+	blackColorString  = "#000000"
 )
 
 var (
-	white  = lipgloss.Color(whiteColorString)
-	purple = lipgloss.Color(purpleColorString)
-	green  = lipgloss.Color(greenColorString)
-	gray   = lipgloss.Color(grayColorString)
-	blue   = lipgloss.Color(blueColorString)
-	red    = lipgloss.Color(redColorString)
+	White  = lipgloss.Color(whiteColorString)
+	Purple = lipgloss.Color(purpleColorString)
+	Green  = lipgloss.Color(greenColorString)
+	Gray   = lipgloss.Color(grayColorString)
+	Blue   = lipgloss.Color(blueColorString)
+	Red    = lipgloss.Color(redColorString)
+	Black  = lipgloss.Color(blackColorString)
 )
 
 var (
-	Primary   = green
-	Secondary = white
-	Muted     = gray
-	Error     = red
+	Primary   = Green
+	Secondary = White
+	Muted     = Gray
+	Error     = Red
 )
 
 var (
 	ErrorStyle = lipgloss.NewStyle().
-			Foreground(red).
+			Foreground(Red).
 			Bold(true)
 
 	HeaderStyle = lipgloss.NewStyle().
@@ -37,5 +39,5 @@ var (
 			Bold(true)
 
 	TextStyle = lipgloss.NewStyle().
-			Foreground(gray)
+			Foreground(Gray)
 )
