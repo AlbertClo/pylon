@@ -1,6 +1,8 @@
 package keybind
 
-import "github.com/charmbracelet/bubbles/key"
+import (
+	"github.com/charmbracelet/bubbles/key"
+)
 
 type Shortcuts struct {
 	Up        key.Binding
@@ -25,8 +27,8 @@ func New() Shortcuts {
 			key.WithHelp("enter", "select"),
 		),
 		StartStop: key.NewBinding(
-			key.WithKeys("s"),
-			key.WithHelp("s", "start/stop"),
+			key.WithKeys("s", " "),
+			key.WithHelp("s/space", "start/stop"),
 		),
 		Quit: key.NewBinding(
 			key.WithKeys("q", "esc", "ctrl+c"),
