@@ -11,10 +11,10 @@ func RenderLeftContent(m Model) string {
 	for i, item := range m.GetMenuItems() {
 		if i == m.GetSelectedItem() {
 			// Selected item
-			menuStr.WriteString(fmt.Sprintf("> %s\n", item))
+			menuStr.WriteString(fmt.Sprintf("> %s\n", item.Name))
 		} else {
 			// Unselected item
-			menuStr.WriteString(fmt.Sprintf("  %s\n", item))
+			menuStr.WriteString(fmt.Sprintf("  %s\n", item.Name))
 		}
 	}
 

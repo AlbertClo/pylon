@@ -3,10 +3,11 @@ package keybind
 import "github.com/charmbracelet/bubbles/key"
 
 type Shortcuts struct {
-	Up    key.Binding
-	Down  key.Binding
-	Enter key.Binding
-	Quit  key.Binding
+	Up        key.Binding
+	Down      key.Binding
+	Enter     key.Binding
+	Quit      key.Binding
+	StartStop key.Binding
 }
 
 func New() Shortcuts {
@@ -22,6 +23,10 @@ func New() Shortcuts {
 		Enter: key.NewBinding(
 			key.WithKeys("enter"),
 			key.WithHelp("enter", "select"),
+		),
+		StartStop: key.NewBinding(
+			key.WithKeys("s"),
+			key.WithHelp("s", "start/stop"),
 		),
 		Quit: key.NewBinding(
 			key.WithKeys("q", "esc", "ctrl+c"),

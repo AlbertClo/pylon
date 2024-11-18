@@ -5,6 +5,7 @@ import (
 	"github.com/AlbertClo/pylon/color"
 	"github.com/AlbertClo/pylon/keybind"
 	"github.com/AlbertClo/pylon/layout"
+	"github.com/AlbertClo/pylon/types"
 	"github.com/AlbertClo/pylon/view"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -28,7 +29,7 @@ type Model struct {
 	quitting   bool
 	err        error
 	keys       keybind.Shortcuts
-	menuItems  []string
+	menuItems  []types.MenuItem
 	selected   int
 	windowSize struct {
 		width  int
@@ -48,12 +49,47 @@ func (m Model) GetKeys() keybind.Shortcuts {
 	return m.keys
 }
 
-func (m Model) GetMenuItems() []string {
+func (m Model) GetMenuItems() []types.MenuItem {
 	return m.menuItems
 }
 
 func (m Model) GetSelectedItem() int {
 	return m.selected
+}
+
+func getMenuItems() []types.MenuItem {
+	return []types.MenuItem{
+		{
+			Name:    "Vite",
+			Start:   "npm run dev",
+			Stop:    "stop",
+			Running: false,
+		},
+		{
+			Name:    "Server",
+			Start:   "php artisan serve --host localhost --port 8000",
+			Stop:    "stop",
+			Running: false,
+		},
+		{
+			Name:    "Pail",
+			Start:   "php artisan pail -vv",
+			Stop:    "stop",
+			Running: false,
+		},
+		{
+			Name:    "Debug",
+			Start:   "php artisan dump-server",
+			Stop:    "stop",
+			Running: false,
+		},
+		{
+			Name:    "pwd",
+			Start:   "pwd",
+			Stop:    "stop",
+			Running: false,
+		},
+	}
 }
 
 func initialModel() Model {
@@ -65,7 +101,7 @@ func initialModel() Model {
 		counter:   0,
 		message:   "",
 		keys:      keybind.New(),
-		menuItems: []string{"Start", "Stop", "Quit"},
+		menuItems: getMenuItems(),
 		selected:  0, // Start with first item selected
 	}
 }
@@ -95,16 +131,15 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.selected = 0
 			}
 			return m, nil
-		case key.Matches(msg, m.keys.Enter):
-			switch m.menuItems[m.selected] {
-			case "Start":
-				m.message = "Starting..."
-			case "Stop":
-				m.message = "Stopping..."
-			case "Quit":
-				m.quitting = true
-				return m, tea.Quit
+		case key.Matches(msg, m.keys.StartStop):
+			if m.menuItems[m.selected].Running {
+				m.message = m.menuItems[m.selected].Stop
+				m.menuItems[m.selected].Running = false
+			} else {
+				m.message = m.menuItems[m.selected].Start
+				m.menuItems[m.selected].Running = true
 			}
+			return m, nil
 		}
 	case tea.WindowSizeMsg:
 		m.windowSize.width = msg.Width
